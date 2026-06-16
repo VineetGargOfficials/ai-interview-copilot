@@ -4,11 +4,15 @@ from pypdf import PdfReader
 from pydantic import BaseModel
 
 from app.services.skill_extractor import skill_extractor
+from app.services.job_recommender import candidate_skills
 
 router = APIRouter()
 
 class ResumeTextRequest(BaseModel):
     text: str
+
+class SkillsRequest(BaseModel):
+    skills: list[str]
 
 @router.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
@@ -31,3 +35,7 @@ async def upload_resume(file: UploadFile = File(...)):
 @router.post("/extract-skills")
 def extract_skills(request: ResumeTextRequest):
     return skill_extractor(request.text)
+
+@router.post("/job-recommender")
+def recommend_jobs(request: SkillsRequest):
+    return candidate_skills(request.skills)
