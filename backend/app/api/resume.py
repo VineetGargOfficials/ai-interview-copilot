@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from app.services.skill_extractor import skill_extractor
 from app.services.job_recommender import candidate_skills
+from app.services.skill_gap_detector import target_role
 
 router = APIRouter()
 
@@ -13,6 +14,11 @@ class ResumeTextRequest(BaseModel):
 
 class SkillsRequest(BaseModel):
     skills: list[str]
+
+class SkillGapRequest(BaseModel):
+    role: str
+    skills: list[str]
+
 
 @router.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
@@ -39,3 +45,7 @@ def extract_skills(request: ResumeTextRequest):
 @router.post("/job-recommender")
 def recommend_jobs(request: SkillsRequest):
     return candidate_skills(request.skills)
+
+@router.post("/skill-gap")
+def find_skill_sap(request: SkillGapRequest):
+    return target_role(request.role ,request.skills)
