@@ -1,8 +1,14 @@
 from fastapi import APIRouter, UploadFile, File
 from io import BytesIO
 from pypdf import PdfReader
+from pydantic import BaseModel
+
+from app.services.skill_extractor import skill_extractor
 
 router = APIRouter()
+
+class ResumeTextRequest(BaseModel):
+    text: str
 
 @router.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
@@ -21,3 +27,7 @@ async def upload_resume(file: UploadFile = File(...)):
         "page": len(reader.pages),
         "content_type": full_text[:100].strip(),
     }
+
+@router.post("/extract-skills")
+def extract_skills(request: ResumeTextRequest):
+    return skill_extractor(request.text)
