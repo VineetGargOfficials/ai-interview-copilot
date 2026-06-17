@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from app.services.skill_extractor import skill_extractor
 from app.services.job_recommender import candidate_skills
 from app.services.skill_gap_detector import target_role
+from app.services.roadmap_generator import find_roadmap
 
 router = APIRouter()
 
@@ -18,6 +19,9 @@ class SkillsRequest(BaseModel):
 class SkillGapRequest(BaseModel):
     role: str
     skills: list[str]
+
+class RoadmapRequest(BaseModel):
+    missing_skills: list[str]
 
 
 @router.post("/upload-resume")
@@ -49,3 +53,7 @@ def recommend_jobs(request: SkillsRequest):
 @router.post("/skill-gap")
 def find_skill_sap(request: SkillGapRequest):
     return target_role(request.role ,request.skills)
+
+@router.post("/roadmap")
+def create_roadmap(request: RoadmapRequest):
+    return find_roadmap(request.missing_skills)
