@@ -1,3 +1,5 @@
+from app.utils.api_response import (success_response, failure_response)
+
 SKILL_ROADMAP = {
     "Python": {
         "priority": 1,
@@ -39,7 +41,8 @@ def find_roadmap(skills: list[str])->dict:
                 })   
         
 
-
-    return {
+    
+    return success_response({
         "roadmap": roadmap
-    }
+    })
+

@@ -1,28 +1,20 @@
 from fastapi import APIRouter, UploadFile, File
 from io import BytesIO
 from pypdf import PdfReader
-from pydantic import BaseModel
 
 from app.services.skill_extractor import skill_extractor
 from app.services.job_recommender import candidate_skills
 from app.services.skill_gap_detector import target_role
 from app.services.roadmap_generator import find_roadmap
+from app.services.parsering_resume import parser
+
+from app.models.skill_extractor_model import ResumeTextRequest
+from app.models.skill_gap_detector_model import SkillGapRequest
+from app.models.job_recommender_model import SkillsRequest
+from app.models.roadmap_generator_model import RoadmapRequest
+from app.models.parsering_resume_model import ParseringRequest
 
 router = APIRouter()
-
-class ResumeTextRequest(BaseModel):
-    text: str
-
-class SkillsRequest(BaseModel):
-    skills: list[str]
-
-class SkillGapRequest(BaseModel):
-    role: str
-    skills: list[str]
-
-class RoadmapRequest(BaseModel):
-    missing_skills: list[str]
-
 
 @router.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
@@ -36,10 +28,12 @@ async def upload_resume(file: UploadFile = File(...)):
         text = page.extract_text() or ""
         full_text += text + "\n"
 
+    parsed_resume = parser(full_text)
 
     return{
         "page": len(reader.pages),
         "content_type": full_text[:100].strip(),
+        "parsed_Resume": parsed_resume["data"]
     }
 
 @router.post("/extract-skills")
@@ -57,3 +51,7 @@ def find_skill_sap(request: SkillGapRequest):
 @router.post("/roadmap")
 def create_roadmap(request: RoadmapRequest):
     return find_roadmap(request.missing_skills)
+
+@router.post("/parser-resume")
+def parseringResume(request: ParseringRequest):
+    return parser(request.resume)

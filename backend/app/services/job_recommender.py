@@ -1,4 +1,4 @@
-from app.services.skill_extractor import skill_extractor
+from app.utils.api_response import success_response, failure_response 
 
 JOB_ROLE_SKILLS = {
     "AI Engineer": [
@@ -57,7 +57,7 @@ def candidate_skills(skills: list[str])-> dict:
         reverse = True
     )
 
-    return{
+    return success_response({
         "recommendations": recommendations
-    }
+    })
 

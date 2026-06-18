@@ -1,3 +1,4 @@
+from app.utils.api_response import (success_response, failure_response)
 JOB_ROLE_SKILLS = {
     "AI Engineer": {
         "Python",
@@ -42,11 +43,12 @@ def target_role(role: str, skills: list[str])-> dict:
                     if skill not in skill_set
                 ]
 
-            return {
+            return success_response({
                 "role": role,
                 "existing_skill": matched_skill,
                 "missing_skills": missing_skill,
-            }
+            })
+            
         
     return {
         "error": f"Role '{role}' not found"

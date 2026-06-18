@@ -1,3 +1,4 @@
+from app.utils.api_response import (success_response, failure_response)
 SKILL_KEYWORD = [
     "Python",
     "Java",
@@ -25,7 +26,7 @@ def skill_extractor(text: str) -> dict:
         if skill.lower() in text:
             detected_skills.add(skill)
 
-    return {
+    return success_response({
         "skills": sorted(list(detected_skills))
-    }
+    })
 
